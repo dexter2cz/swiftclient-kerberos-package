@@ -1,0 +1,69 @@
+#!/bin/bash
+
+dpkg -l | egrep -q "heimdal-dev|heimdal-multidev|krb5-multidev|libkrb5-dev" || { echo "Install one of heimdal-dev heimdal-multidev krb5-multidev libkrb5-dev package"; exit 1; }
+
+unset PYTHONPATH
+WORKDIR=python-swiftclient-kerberos
+
+rm -rf $WORKDIR
+
+mkdir -p $WORKDIR/DEBIAN
+mkdir -p $WORKDIR/opt/python-swiftclient-kerberos
+mkdir -p $WORKDIR/usr/bin
+
+pip install -t $WORKDIR/opt/python-swiftclient-kerberos python-swiftclient requests-kerberos
+
+cat > $WORKDIR/DEBIAN/control <<EOF
+Package: python-swiftclient-kerberos
+Version: 1:3.2.0-1+dex1
+Architecture: all
+Maintainer: Pavel Vondruska <vondruska@cesnet.cz>
+Installed-Size: 453
+Replaces: swift (<< 1.6.0)
+Conflicts: python-swiftclient, python3-swiftclient
+Section: python
+Priority: extra
+Homepage: https://github.com/openstack/python-swiftclient
+Description: Client library for Openstack Swift API
+ OpenStack Object Storage (code-named Swift) creates redundant, scalable object
+ storage using clusters of standardized servers to store petabytes of
+ accessible data. It is not a file system or real-time data storage system, but
+ rather a long-term storage system for a more permanent type of static data
+ that can be retrieved, leveraged, and then updated if necessary. Primary
+ examples of data that best fit this type of storage model are virtual machine
+ images, photo storage, email storage and backup archiving. Having no central
+ "brain" or master point of control provides greater scalability, redundancy
+ and permanence.
+ .
+ Objects are written to multiple hardware devices in the data center, with
+ the OpenStack software responsible for ensuring data replication and
+ integrity across the cluster. Storage clusters can scale horizontally by
+ adding new nodes. Should a node fail, OpenStack works to replicate its
+ content from other active nodes. Because OpenStack uses software logic to
+ ensure data replication and distribution across different devices,
+ inexpensive commodity hard drives and servers can be used in lieu of more
+ expensive equipment.
+ .
+ This package provides a client for the OpenStack Swift API. There's a Python
+ API  (the "swiftclient" module), and a command-line script ("swift").
+EOF
+
+cat > $WORKDIR/usr/bin/swift <<EOSWIFT
+#! /usr/bin/python
+
+import sys
+
+sys.path += ["/opt/python-swiftclient-kerberos"]
+
+from swiftclient.shell import main
+
+if __name__ == "__main__":
+    sys.exit(main())
+EOSWIFT
+
+curl https://patch-diff.githubusercontent.com/raw/openstack/python-swiftclient/pull/22.patch | patch -p1 -d $WORKDIR/opt/python-swiftclient-kerberos/
+
+chmod +x $WORKDIR/usr/bin/swift
+
+dpkg-deb -b $WORKDIR .
+rm -rf $WORKDIR
