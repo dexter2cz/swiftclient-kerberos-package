@@ -11,14 +11,15 @@ mkdir -p $WORKDIR/DEBIAN
 mkdir -p $WORKDIR/opt/python-swiftclient-kerberos
 mkdir -p $WORKDIR/usr/bin
 
-pip install -t $WORKDIR/opt/python-swiftclient-kerberos python-swiftclient requests-kerberos
+pip install -t $WORKDIR/opt/python-swiftclient-kerberos python-swiftclient requests-kerberos setuptools
 
 cat > $WORKDIR/DEBIAN/control <<EOF
 Package: python-swiftclient-kerberos
-Version: 1:3.2.0-1+dex1
+Version: 3.2.0-1+dex1
 Architecture: all
 Maintainer: Pavel Vondruska <vondruska@cesnet.cz>
-Installed-Size: 453
+Installed-Size: 6832
+Depends: python | python2.7 | python3
 Replaces: swift (<< 1.6.0)
 Conflicts: python-swiftclient, python3-swiftclient
 Section: python
@@ -46,6 +47,8 @@ Description: Client library for Openstack Swift API
  .
  This package provides a client for the OpenStack Swift API. There's a Python
  API  (the "swiftclient" module), and a command-line script ("swift").
+ .
+ This package contains patch for Kerberos authentication.
 EOF
 
 cat > $WORKDIR/usr/bin/swift <<EOSWIFT
