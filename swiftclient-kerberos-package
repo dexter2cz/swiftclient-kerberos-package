@@ -54,7 +54,12 @@ EOF
 cat > $WORKDIR/usr/bin/swift <<EOSWIFT
 #! /usr/bin/python
 
+import os
 import sys
+
+if '--kerberos' in str(sys.argv[1:]):
+    os.environ["ST_USER"] = "user"
+    os.environ["ST_KEY"] = "key"
 
 sys.path += ["/opt/python-swiftclient-kerberos"]
 
