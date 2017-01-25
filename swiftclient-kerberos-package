@@ -57,7 +57,7 @@ cat > $WORKDIR/usr/bin/swift <<EOSWIFT
 import os
 import sys
 
-if os.getenv("ST_KRB") == "1":
+if os.getenv("ST_KRB") == "1" and '--kerberos' not in str(sys.argv[1:]):
     sys.argv.append('--kerberos')
 
 if '--kerberos' in str(sys.argv[1:]):
