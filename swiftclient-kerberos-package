@@ -15,7 +15,7 @@ pip install -t $WORKDIR/opt/python-swiftclient-kerberos python-swiftclient reque
 
 cat > $WORKDIR/DEBIAN/control <<EOF
 Package: python-swiftclient-kerberos
-Version: 3.2.0-1+dex1
+Version: 3.2.0-1+dex2
 Architecture: all
 Maintainer: Pavel Vondruska <vondruska@cesnet.cz>
 Installed-Size: 6832
@@ -72,7 +72,7 @@ if __name__ == "__main__":
     sys.exit(main())
 EOSWIFT
 
-curl https://patch-diff.githubusercontent.com/raw/openstack/python-swiftclient/pull/22.patch | patch -p1 -d $WORKDIR/opt/python-swiftclient-kerberos/
+curl https://github.com/openstack/python-swiftclient/commit/3e248bc679fa5ec6825d534c1afc9b2966e238f5.patch | patch -f -p1 -d $WORKDIR/opt/python-swiftclient-kerberos/
 
 chmod +x $WORKDIR/usr/bin/swift
 
