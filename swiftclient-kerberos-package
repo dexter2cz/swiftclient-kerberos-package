@@ -15,7 +15,7 @@ pip install -t $WORKDIR/opt/python-swiftclient-kerberos python-swiftclient reque
 
 cat > $WORKDIR/DEBIAN/control <<EOF
 Package: python-swiftclient-kerberos
-Version: 3.2.0-1+dex2
+Version: 3.3.0-1+dex1
 Architecture: all
 Maintainer: Pavel Vondruska <vondruska@cesnet.cz>
 Installed-Size: 6832
